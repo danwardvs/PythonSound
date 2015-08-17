@@ -2,6 +2,15 @@
 
 # open a microphone in pyAudio and listen for taps
 
+
+
+
+import win32api
+from win32con import *
+
+x = 0
+y = 0
+
 import pyaudio
 import struct
 import math
@@ -85,6 +94,7 @@ class TapTester(object):
 
     def tapDetected(self):
         print "Tap!"
+        win32api.mouse_event(MOUSEEVENTF_WHEEL, x, y, -100, 0)
 
     def listen(self):
         try:
