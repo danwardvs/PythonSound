@@ -1,9 +1,49 @@
-import RPi.GPIO as GPIO ## Import GPIO library
 import time ## Import 'time' library. Allows us to use 'sleep'
 
-GPIO.setwarnings(False)
-GPIO.setmode(GPIO.BOARD) ## Use board pin numbering
-GPIO.setup(0, GPIO.OUT) ## Setup GPIO Pin 7 to OUT
+import math
+import pyaudio
+
+#sudo apt-get install python-pyaudio
+PyAudio = pyaudio.PyAudio
+
+#See http://en.wikipedia.org/wiki/Bit_rate#Audio
+BITRATE = 16000 #number of frames per second/frameset.      
+
+
+
+
+
+
+def beep(LENGTH):
+    #See http://www.phy.mtu.edu/~suits/notefreqs.html
+    FREQUENCY = 900 #Hz, waves per second, 261.63=C4-note.
+
+
+    NUMBEROFFRAMES = int(BITRATE * LENGTH)
+    RESTFRAMES = 0
+    WAVEDATA = ''    
+
+    for x in xrange(NUMBEROFFRAMES):
+     WAVEDATA = WAVEDATA+chr(int(math.sin(x/((BITRATE/FREQUENCY)/math.pi))*127+128))    
+
+    #fill remainder of frameset with silence
+    for x in xrange(RESTFRAMES): 
+     WAVEDATA = WAVEDATA+chr(128)
+
+    p = PyAudio()
+
+
+
+    stream = p.open(format = p.get_format_from_width(1), 
+                channels = 1, 
+                rate = BITRATE, 
+                output = True)
+    
+    stream.write(WAVEDATA)
+
+    stream.stop_stream()
+    stream.close()
+    p.terminate()
 
 
 
@@ -32,26 +72,13 @@ def get_message():
 
         for i in message_morse:
                 if i == ".":
-                        beep_short()
+                        beep(0.3)
                 if i == "-":
-                        beep_long()
+                        beep(0.6)
                 if i == " ":
                         time.sleep(0.7)
                 
-
-def beep_short():
-        GPIO.output(17,True)## Switch on pin 7
-        time.sleep(0.1)## Wait
-        GPIO.output(17,False)## Switch off pin 7
-        time.sleep(0.1)## Wait
-
-def beep_long():
-        GPIO.output(17,True)## Switch on pin 7
-        time.sleep(0.3)## Wait
-        GPIO.output(17,False)## Switch off pin 7
-        time.sleep(0.3)## Wait
-
-
+ 
 get_message()
 
 
