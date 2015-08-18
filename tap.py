@@ -15,6 +15,8 @@ import pyaudio
 import struct
 import math
 
+
+
 INITIAL_TAP_THRESHOLD = 0.010
 FORMAT = pyaudio.paInt16 
 SHORT_NORMALIZE = (1.0/32768.0)
@@ -94,7 +96,7 @@ class TapTester(object):
 
     def tapDetected(self):
         print "Tap!"
-        win32api.mouse_event(MOUSEEVENTF_WHEEL, x, y, -100, 0)
+        win32api.mouse_event(MOUSEEVENTF_WHEEL, x, y, -scroll, 0)
 
     def listen(self):
         try:
@@ -127,6 +129,6 @@ class TapTester(object):
 
 if __name__ == "__main__":
     tt = TapTester()
-
-    for i in range(1000):
+    scroll = int(raw_input("Scroll amount per tap: "))
+    while 2>1:
         tt.listen()
