@@ -67,7 +67,8 @@ def decipher(message):
             else: row.append(it)
 
     return map(lambda it: it[0], row)
-    print(type(map))
+
+    
 print("Hello pooping world!")
 decipher(decode(".... . .-.. .-.. --- .--. --- --- .--. .. -. --. .-- --- .-. .-.. -.."))
 
