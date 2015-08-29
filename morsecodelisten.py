@@ -6,6 +6,44 @@
 import pyaudio
 import struct
 import math
+import string
+
+CODE = {'.-': 'A',     '-...': 'B',   '-.-.': 'C', 
+        '-..':'D',    '.': 'E',      '..-.': 'F',
+        '--.': 'G',    '....': 'H',   '..': 'I',
+        '.---': 'J',   '-.-': 'K',    '.-..': 'L',
+        '--': 'M',     '-.': 'N',     '---': 'O',
+        '.--.': 'P',   '--.-': 'Q',   '.-.': 'R',
+        '...': 'S',    '-': 'T',      '..-': 'U',
+        '...-': 'V',   '.--': 'W',    '-..-': 'X',
+        '-.--': 'Y',   '--..': 'Z',
+        
+        '-----': '0',  '.----': '1',  '..---': '2',
+        '...--': '3',  '....-': '4',  '.....': '5',
+        '-....': '6',  '--...': '7',  '---..': '8',
+        '----.': '9' 
+        }
+
+
+def decode(code):
+    code = code + " "
+    letter = ""
+    message = ""
+    for i in range(0, len(code)):
+        if code[i] != " ":
+            letter = letter + code[i]
+        
+        if code[i] == " ":
+            decoded_letter = str(CODE[letter],)
+            message = message + decoded_letter
+            letter = ""
+        if code[i] == "/":
+            message = message + " "
+            
+        
+    print message
+    
+
 
 
 INITIAL_TAP_THRESHOLD = 0.010
@@ -55,6 +93,7 @@ class TapTester(object):
         self.letter = ""
         self.code = ""
         self.added_space = False
+        self.done = False
 
     def stop(self):
         self.stream.close()
@@ -91,13 +130,11 @@ class TapTester(object):
     def shortTapDetected(self):
         self.added_space = False
         self.letter = self.letter + "."
-        print(self.letter)
         
 
     def longTapDetected(self):
         self.added_space = False
         self.letter = self.letter + "-"
-        print(self.letter)
         
         
 
@@ -140,17 +177,20 @@ class TapTester(object):
             self.code = self.code + " "
             self.code = self.code + self.letter
             self.letter = ""
-            print("new letter")
         if self.quietcount > 40:
             print(self.code)
             print("Done!")
-            
-            raw_input("Press Enter to continue")
+            self.done = True
             
             
 
 if __name__ == "__main__":
     tt = TapTester()
     raw_input("Press Enter to continue")
-    while 2>1:
+    tt.noisycount = 0
+    tt.quietcount = 0
+    print("Listening...")
+    while tt.done != True:
         tt.listen()
+    tt.code = tt.code.lstrip(' ')
+    decode(str(tt.code))
