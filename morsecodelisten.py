@@ -52,7 +52,9 @@ class TapTester(object):
         self.noisycount = MAX_TAP_BLOCKS+1 
         self.quietcount = 0 
         self.errorcount = 0
-        self.message = ""
+        self.letter = ""
+        self.code = ""
+        self.added_space = False
 
     def stop(self):
         self.stream.close()
@@ -87,12 +89,15 @@ class TapTester(object):
         return stream
 
     def shortTapDetected(self):
-        self.message = self.message + "."
-        print(self.message)
+        self.added_space = False
+        self.letter = self.letter + "."
+        print(self.letter)
+        
 
     def longTapDetected(self):
-        self.message = self.message + "-"
-        print(self.message)
+        self.added_space = False
+        self.letter = self.letter + "-"
+        print(self.letter)
         
         
 
@@ -119,6 +124,7 @@ class TapTester(object):
             
             if 1 <= self.noisycount <= MAX_TAP_BLOCKS:
                 self.shortTapDetected()
+                
 
             elif 1 <= self.noisycount <= 10:
                 self.longTapDetected()
@@ -129,7 +135,22 @@ class TapTester(object):
                 # turn up the sensitivity
                 self.tap_threshold *= 0.9
 
+        if self.quietcount > 3 and self.added_space == False:
+            self.added_space = True
+            self.code = self.code + " "
+            self.code = self.code + self.letter
+            self.letter = ""
+            print("new letter")
+        if self.quietcount > 40:
+            print(self.code)
+            print("Done!")
+            
+            raw_input("Press Enter to continue")
+            
+            
+
 if __name__ == "__main__":
     tt = TapTester()
+    raw_input("Press Enter to continue")
     while 2>1:
         tt.listen()
