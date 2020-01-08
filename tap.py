@@ -4,16 +4,13 @@
 
 
 
-
-import win32api
-from win32con import *
-
 x = 0
 y = 0
 
 import pyaudio
 import struct
 import math
+import pyautogui
 
 
 
@@ -95,13 +92,13 @@ class TapTester(object):
         return stream
 
     def tapDetected(self):
-        print "Tap!"
-        win32api.mouse_event(MOUSEEVENTF_WHEEL, x, y, -scroll, 0)
+        print ("Tap!")
+        pyautogui.scroll(-scroll)
 
     def listen(self):
         try:
             block = self.stream.read(INPUT_FRAMES_PER_BLOCK)
-        except IOError, e:
+        except(IOError, e):
             # dammit. 
             self.errorcount += 1
             print( "(%d) Error recording: %s"%(self.errorcount,e) )
@@ -129,6 +126,6 @@ class TapTester(object):
 
 if __name__ == "__main__":
     tt = TapTester()
-    scroll = int(raw_input("Scroll amount per tap: "))
+    scroll = int(input("Scroll amount per tap: "))
     while 2>1:
         tt.listen()
